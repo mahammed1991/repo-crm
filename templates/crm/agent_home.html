@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}
+  All Leads
+{% endblock title %}
+<head>
+{% block main_css %}
+  <link href="{% static 'css/crm/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        .alert {
+            padding: 19px 15px;
+            color: #fefefe;
+            position: relative;
+            font: 20px/20px Museo300Regular, Helvetica, Arial, sans-serif;
+        }
+        .alert .msg { padding: 0 20px 0 40px;}
+        .info-box {		background: #4D7DBE  no-repeat 14px 14px;}
+        .pagination {
+            display: inline-block;
+            padding-left: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .pagination>li {
+            display: inline;
+        }
+
+        .pagination>li:first-child>a, .pagination>li:first-child>span {
+            margin-left: 0;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+          z-index: 3;
+          color: #fff;
+          cursor: default;
+          background-color: #337ab7;
+          border-color: #337ab7;
+      }
+
+      .pagination>li>a, .pagination>li>span {
+          position: relative;
+          float: left;
+          padding: 6px 12px;
+          margin-left: -1px;
+          line-height: 1.42857143;
+          color: #337ab7;
+          text-decoration: none;
+          background-color: #fff;
+          border: 1px solid #ddd;
+      }
+
+      .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
+          z-index: 2;
+          color: #23527c;
+          background-color: #eee;
+          border-color: #ddd;
+      }
+
+      .pagination>li:last-child>a, .pagination>li:last-child>span {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+      }
+      .input-group{
+        margin-bottom: -25px;
+      }
+      </style>
+{% endblock main_css %}
+  </head>
+  {% block content %}
+  <body>
+        
+        <section class="top-margin wfm">
+       		<div class="container-fluid" style="max-width:100%;">
+          <button style="float: right";><a id="export-btn" style="text-decoration: none">Export</a></button>
+          <div id="datediv" class="row" style="margin-left: 350px;">
+            <div class="col-md-3" style="width: 267px">
+                
+                <input id="datepickerFrom" class="form-control date-from" type="text" name="date_from" placeholder="Start Date" style="height: 15px;">
+            </div>
+            <div class="col-md-3" style="width: 267px">
+                
+                <input id="datepickerTo" type="text" class="form-control date-to" name="date_to" placeholder="End Date" style="margin-left: 0px;height: 15px;" >
+            </div>
+            <div class="col-md-3">
+
+                <input id="date-submit" type="submit" value="Submit" style="background: #4385f5;height: 29px;color:white;">
+            </div>
+          </div>
+            </div>
+            	<div class="white-section" style="margin-top: 0px;">
+                	<div class="blue-bg">
+                    <div class="col-sm-12">
+                      <div class="blue-padding-20">
+                        <div class="row">
+                           <div class="col-sm-2">
+                            <label>Show Results</label>
+                            <select id="limit" name="limit" class="form-control bgicon" style="height: 30px;width:75px;margin-bottom: 0px;">
+                              <option>10</option>
+                              <option>25</option>
+                              <option>50</option>
+                              <option>100</option>
+                            </select>
+                           </div>
+                            <div class="col-sm-3">
+                              <label for="status">Status</label>
+                               <select class="form-control bgicon" id='status'>
+                               <option>Select</option>
+                                 {% if lead_status %}
+                                  {% for status in lead_status %}
+                                   <option>{{status}}</option>
+                                   {% endfor %}
+                                 {% endif %}
+                               </select>
+                             </div>
+                             <div class="col-sm-3">
+                               <label for="status">Sub Status</label>
+                               <select class="form-control bgicon" id='sub_status'>
+                               </select>
+                             </div> 
+                             <div class="col-sm-1"><p>OR</p></div> 
+                             <div class="col-sm-3">
+                                <label for="fresh-appointment">Fresh Appointment</label>
+                                <select class="form-control bgicon" id='appointment' >
+                                   <option>Select</option>
+                                   <option>Without Appointment</option>
+                                   <option>30 minutes</option>
+                                   <option>1 hour</option>
+                                   <option>Today</option>
+                                   <option>Tomorrow</option>
+                                   <option>This week</option>
+                                </select> 
+                             </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                	<div class="padding-20 wfm-body-table">
+                    	<table class="table table-bordered"> 
+                        	<thead> 
+                            	<tr> 
+                                    <th>CID </th> 
+                                    <th>Company</th> 
+                                    <th>Customer Name</th>
+                                    <th>Created Date</th> 
+                                    <th>Appointment time</th> 
+                                    <th>Phone No</th> 
+                                    <th>Additional Ph No</th> 
+                                    <th>Web Master No.</th> 
+                                    <th>Location</th> 
+                                  </tr>
+                             </thead> 
+                             <tbody> 
+                             </tbody> 
+                     	</table>
+               <div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
+                  <ul class="pagination" id="pagination">
+                    
+                  </ul>
+                </div>
+            </div>
+                    </div>
+                    <div id="data" class="padding-20 wfm-body-table" style="display:none;margin-top: -479px;"></div>
+                </div>
+               <!--<div id="pagination-container" style="margin-bottom: 10px;text-align: center;display:inline;">
+                  <ul class="pagination" id="pagination">
+                    
+                  </ul>
+                </div>-->
+            </div>
+        </section>
+
+  
+
+  </body>
+{% endblock content %}
+
+{% block main_js %}
+<script src="{% static 'js/reports/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mini_crm_js/appointment_chrome_notification.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mini_crm_js/pagination.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui.js' %}"></script>
+<script type="text/javascript">
+  is_agent = true;
+  function call_crm_management(freshAppointment){
+      limit = $('#limit').val()
+      status = $('#status').val()
+      sub_status = $('#sub_status').val()
+      appointment = $('#appointment').val()
+      startDate = $('#datepickerFrom').val()
+      endDate = $('#datepickerTo').val()
+      data = {'status':status, 'sub_status':sub_status,'limit':limit}
+      if(freshAppointment){
+        data = {'appointment': appointment,'limit':limit}
+        $('#status').val('Select')
+        $('#sub_status').html('')
+        lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[$('#status').val()]
+        if (lead_sub_status){
+          for(var i=0;i<lead_sub_status.length;i++){
+            $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+          }
+        }
+        else{
+          $('#sub_status').append("<option>Select</option>")
+        }
+        $('#sub_status').val('Select')
+      }
+      else{
+        $('#appointment').val('Select')
+      }
+
+      data['page'] = clickedPage;
+      if (startDate && endDate){
+        data['start_date'] = startDate
+        data['end_date'] = endDate
+      }
+
+      $.ajax({
+              type: "GET",
+              url: '/crm/myleads/',
+              data: data,
+              success: function(response) {
+                      leads_count = response['leads_count']
+                      if (leads_count > 10){
+                        numOfPages = Math.ceil(leads_count/parseInt($('#limit').val()));
+                        formPagination(numOfPages);
+                        }
+                      else{
+                        $("#pagination").html('');
+                        $("#entries").html('');
+                      }
+                      if (response['leads_list'].length) {
+                        $('table').show();
+                        $('#data').hide(); 
+                        $('tbody').html('')
+                        for(var i=0;i<response['leads_list'].length;i++){
+                          $('tbody').append('<tr> <td><a onclick="addURL(this)" href="/crm/lead-details/' + response['leads_list'][i]['id'] + '/'+ response['leads_list'][i]['sf_lead_id'] + '" target="_blank">'+ response['leads_list'][i]['customer_id'] + '</a> </td>'+ "<td>"+response['leads_list'][i]['company'] + "</td> <td>"+response['leads_list'][i]['customer_name']+"</td> <td>"+response['leads_list'][i]['created_date']+ "</td> <td>"+response['leads_list'][i]['appointment_time']  + "</td> <td> " + response['leads_list'][i]['phone']  +"</td> <td> " + response['leads_list'][i]['phone_optional'] + "</td> <td> " + response['leads_list'][i]['web_master_no']  +"</td> <td>" + response['leads_list'][i]['location'] +"</td></tr>")                          
+                        }
+                      }
+                      else{
+                        $('#data').html('<div  id="no-leads-msg">'+
+                                        '<div class="container-fluid" style="margin-top:15%;">'+
+                                        '<div class="info-box alert"><div class="msg">'+
+                                        '<strong> Info : </strong> <i><b>There are no leads assigned to you or there are no records for the sort criteria, '+
+                                        'please contact your TL/WFM.</b></i></div></div></div></div>');
+                        $('#data').show(); 
+                        $('table').hide();
+                      }
+              },
+      });    
+  }
+
+  function addURL(element)
+  {
+    //var type = $('#process option:selected').text().replace(" ","");
+    process_type = 'TAG'
+    $(element).attr('href', function() {
+          var url = this.href;
+          if(url.includes(process_type))
+          {
+            return this.href;
+          }
+          else{
+            return this.href + '/' + process_type;
+          }
+    });
+  }
+
+  function populate_sub_status(){
+    status = $('#status').val()
+    $('#sub_status').html('')
+    lead_sub_status = lead_data_status.lead_status_sub_status_mapping.TAG[status]
+    if (lead_sub_status){
+      for(var i=0;i<lead_sub_status.length;i++){
+        $('#sub_status').append("<option>"+ lead_sub_status[i] + "</option>")                          
+      }
+    }
+    else{
+      $('#sub_status').append("<option>Select</option>")
+    }
+    call_crm_management(false);    
+  }
+
+  $('#status').on('change',function(){
+    reloadPagination();
+    populate_sub_status()
+  })
+
+  $('#sub_status').on('change',function(){
+    reloadPagination();
+    call_crm_management(false);
+  })
+
+  $('#appointment').on('change',function(){
+    reloadPagination();
+    appointment = $('#appointment').val()
+    if (appointment != 'Select'){
+      call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
+    }
+
+  })
+
+  $('#limit').on('change',function(){
+    reloadPagination();
+    if (appointment != 'Select'){
+      call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
+    }
+  });
+
+  $("#date-submit").click(function() {
+    reloadPagination();
+    if (appointment != 'Select'){
+      call_crm_management(true);
+    }
+    else{
+      call_crm_management(false);
+    }
+  });
+
+  $('#export-btn').on('click',function(){
+    data['download_csv'] = true;
+    data['is_agent'] = true
+    qs = ''
+    for (key in data){
+      qs += key + '=' + data[key] + '&'
+    }
+    $("#export-btn").attr('href','/crm/myleads/?'+qs)
+  });
+
+
+
+$(document).ready(function() {
+  lead_data = '{{lead_status_sub_status_mapping}}'
+  lead_data_status = JSON.parse(lead_data.replace(/&quot;/g,'"'));
+  lead_status = $('#status').val('In Queue')
+  populate_sub_status();
+
+
+  $("#datepickerFrom").datepicker({
+    defaultDate : "+1w",
+    changeMonth : true,
+    numberOfMonths : 1,
+    dateFormat: "mm/dd/yy",
+    onClose : function(selectedDate) {
+      $("#to").datepicker("option", "minDate", selectedDate);
+    },
+    onSelect: function (selected) {
+          var dt = new Date(selected);
+          dt.setDate(dt.getDate() + 1);
+          $("#datepickerTo").datepicker("option", "minDate", dt);
+      }
+  });
+  $("#datepickerTo").datepicker({
+    defaultDate : "+1w",
+    changeMonth : true,
+    numberOfMonths : 1,
+    dateFormat: "mm/dd/yy",
+    onClose : function(selectedDate) {
+      $("#from").datepicker("option", "maxDate", selectedDate);
+    },
+    onSelect: function (selected) {
+          var dt = new Date(selected);
+          dt.setDate(dt.getDate() - 1);
+          $("#datepickerFrom").datepicker("option", "maxDate", dt);
+      }
+  });
+
+});
+</script>
+{% endblock main_js %}
