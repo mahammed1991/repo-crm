@@ -949,8 +949,8 @@ def clone_lead(request):
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
         obj.lead_status = 'In Queue'
-        obj.lead_owner_name = 'Suri Kamat'
-        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.lead_owner_name = ''
+        obj.lead_owner_email = ''
         obj.regalix_comment = ""
         obj.additional_notes = ""
         obj.first_contacted_on = None
@@ -975,8 +975,8 @@ def clone_lead(request):
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
         obj.lead_status = 'In Queue'
-        obj.lead_owner_name = 'Suri Kamat'
-        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.lead_owner_name = ''
+        obj.lead_owner_email = ''
         obj.regalix_comment = ""
         obj.additional_notes = ""
         obj.created_date = datetime.now()
@@ -998,8 +998,8 @@ def clone_lead(request):
         obj.date_of_installation = None
         obj.sf_lead_id = get_unique_uuid(process_type)
         obj.lead_status = 'In Queue'
-        obj.lead_owner_name = 'Suri Kamat'
-        obj.lead_owner_email = 'skamat@regalix-inc.com'
+        obj.lead_owner_name = ''
+        obj.lead_owner_email = ''
         obj.regalix_comment = ""
         obj.first_contacted_on = None
         obj.appointment_date_in_ist = None

@@ -80,8 +80,8 @@ def lead_form(request):
             # error_url = basic_data['errorURL']
             try:
                 lead = Leads()
-                lead.lead_owner_name = 'Suri Kamat'
-                lead.lead_owner_email = 'skamat@regalix-inc.com'
+                lead.lead_owner_name = ''
+                lead.lead_owner_email = ''
                 lead.google_rep_name = data['gref']
                 lead.google_rep_email = data['emailref']
                 lead.google_rep_manager_name = data['manager_name']
